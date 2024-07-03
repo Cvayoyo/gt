@@ -1,0 +1,860 @@
+i = 1
+pnb_home = true
+pickaxes = true
+take_block_storage = true
+bot = getBot()
+rotation = bot.rotation
+bot.reconnect_interval = 35
+world_pnb = "nudkelop|vri877ze21"
+world_pnb_list = {"nudkelop|vri877ze21","nudkelop1|vri877ze21"}
+takeworldpickaxe = "strseedme|vri877ze22"
+--========================
+storage ="strseedme|vri877ze22"
+--========================
+dropseed ="strseedme|vri877ze22"
+iddropseed = 104
+--========================
+droppack ="strseedme|vri877ze21"
+iddroppack = 20
+--========================
+packname = "world_lock"
+packid = {242}
+pricepack = 2000
+--========================
+idblock = 4584
+idseed = idblock + 1
+idbaris = 20
+--========================
+pnb_delay = 210
+--========================
+modjoin = false
+guardianjoin = false
+maxSpot  = false
+bot.auto_collect = false
+bot.auto_reconnect  = true
+bot.ignore_gems = false
+--========================
+trashitem = {5024, 5026, 5028, 5030, 5030, 5032, 5034, 5036, 5038, 5040, 5042, 5044, 7164, 7162} --trash list
+webhook_link = "https://discord.com/api/webhooks/1200214097866805258/DxLFkIWZJ7vw68jFDKeRSLEvV3RKkfe51TRiF_Ds-5euW06407idjTm_wb7pjhwjOV1b"
+seed_x = 0
+seed_y = 0
+block_x = 0
+block_y = 0
+dooryu = ""
+bot.collect_interval = 25
+bot.object_collect_delay = 80
+bot.collect_range = 3
+pnbx = 45
+pnby = 18
+--========================
+bot.move_interval = 280
+bot.move_range = 7
+farm = bot.auto_farm -- Accessing AutoFarm from bot class.
+farm.id = idblock
+farm.auto_place = true
+farm.auto_break = true
+farm:setActive(2, true) -- Enabling first 5 tile.
+farm:setActive(7, true) -- Enabling first 5 tile.
+-- farm:setActive(17, true) -- Enabling first 5 tile.
+farm.enabled = false
+--=======================
+function disableRecon()
+    bot = getBot()
+    while true do
+        if bot.status == BotStatus.online then
+            bot.auto_reconnect  = false
+        end
+        if bot.status == BotStatus.offline then
+            bot.auto_reconnect  = true
+        end
+    sleep(10000)
+    end
+end
+function webHookAkun()
+    bot = getBot()
+    while true do
+        botInfoTable = {}
+        function formatNumberWithCommas(number)
+            local formatted = string.format("%d", number)
+            local k
+            while true do
+                formatted, k = formatted:gsub("^(-?%d+)(%d%d%d)", '%1,%2')
+                if k == 0 then break end
+            end
+            return formatted
+        end
+        function w()
+            desc = string.format([[
+
+            %s
+            Last Update : %s
+            ]],console_message, "<t:" .. os.time() .. ":R>")
+            webhook = Webhook.new("https://discord.com/api/webhooks/1200214097866805258/DxLFkIWZJ7vw68jFDKeRSLEvV3RKkfe51TRiF_Ds-5euW06407idjTm_wb7pjhwjOV1b")
+            webhook.username = "INFO"
+            webhook.content = "Total Bots : " .. #getBots()
+            webhook.embed1.description = desc
+            webhook.embed1.use = true
+            for ilop = 1,#botInfoTable do
+                webhook.embed1:addField(":farmer: **" .. botInfoTable[ilop].name .. "**","\n**Status**: " .. botInfoTable[ilop].status .. "\n**Active**: " .. botInfoTable[ilop].gem_count .. "\n**Level:** " .. botInfoTable[ilop].level .. "\n**Farming At:** " .. botInfoTable[ilop].farming_at,true)
+            end
+            webhook.embed1.color = 0x0000FF
+            webhook:edit("1200630832726032525")
+            botInfoTable = {}
+        end
+        local GetBot = function(bot)
+            local status = getBot(bot).status
+            local status_Naming = {
+                [BotStatus.offline] = "Offline",
+                [BotStatus.online] = "Online",
+                [BotStatus.account_banned] = "Banned",
+                [BotStatus.location_banned] = "Location Banned",
+                [BotStatus.server_overload] = "Login Failed",
+                [BotStatus.too_many_login] = "Login Failed",
+                [BotStatus.maintenance] = "Maintenance",
+                [BotStatus.version_update] = "Version Update",
+                [BotStatus.server_busy] = "Server Bust",
+                [BotStatus.error_connecting] = "Error Connecting",
+                [BotStatus.logon_fail] = "Login Failed",
+                [BotStatus.http_block] = "HTTP Blocked",
+                [BotStatus.wrong_password] = "Wrong Password",
+                [BotStatus.advanced_account_protection] = "Advanced Account Protection",
+                [BotStatus.bad_name_length] = "Bad Name Length",
+                [BotStatus.invalid_account] = "Invalid Account",
+                [BotStatus.guest_limit] = "Guest Limit",
+                [BotStatus.changing_subserver] = "Changing Subserver",
+                [BotStatus.captcha_requested] = "Captcha",
+                [BotStatus.mod_entered] = "Mod Entered",
+                [BotStatus.high_load] = "High Load"
+            }
+            return status_Naming[status] or "unknown"
+        end
+        for _, bots in pairs(getBots()) do
+            local botInfo = {
+                name = bots.name,
+                gem_count = bots:getActiveTime(), 
+                status = (GetBot(bots.name) == "Online" and ":green_circle: " or GetBot(bots.name) == "unknown" and ":orange_circle: " or ":red_circle: ") .. GetBot(bots.name),
+                level = bots.level,
+                farming_at = bots:getWorld().name
+            }
+            table.insert(botInfoTable, botInfo)
+            if #botInfoTable >= 24 then
+                w()
+                sleep(1000)
+            end
+        end
+        w()
+        sleep(15000)
+    end
+end
+
+function youriek(variant, netid)
+    if variant:get(0):getString() == "OnPlayPositioned" then
+        if variant:get(1):getString():find("audio/door_open.wav") then
+            return true
+        end
+    end
+end
+addEvent(Event.variantlist, youriek)
+function yourieks(variant, netid)
+    if variant:get(0):getString() == "OnZoomCamera" then
+        return true
+    end
+end
+addEvent(Event.variantlist, yourieks)
+function alertcollect(variant, netid)
+    if variant:get(0):getString() == "OnConsoleMessage" and variant:get(1):getString():find("Collected") then
+        return true
+    end
+end
+addEvent(Event.variantlist, alertcollect)
+function youriekss(variant, netid)
+    if variant:get(0):getString() == "OnConsoleMessage" then
+        return true
+    end
+end
+addEvent(Event.variantlist, youriekss)
+function update_packetst(packet)
+    if packet.type == 8 or packet.type == 14 or packet.type == 3 then
+        return true
+    end
+end
+addEvent(Event.update_packet, update_packetst)
+function split(abc, def)
+    if def==nil then
+        def="%s"
+    end
+    local t={}
+    for str in string.gmatch(abc,"([^"..def.."]+)") do
+        table.insert(t,str)
+    end
+    return t
+end
+--=========PICKAXE============
+function Itemdrop(itemID, count)
+    if bot:getInventory():getItemCount(itemID)>=count then
+        bot:sendPacket(2,"action|drop\nitemID|" .. itemID)
+        sleep(500)
+        bot:sendPacket(2,"action|dialog_return\ndialog_name|drop_item\nitemID|" .. itemID .. "|\ncount|" .. count)
+        sleep(500)
+    end
+end
+function scanFloat(id)
+    local count = 0
+    for _, obj in pairs(getObjects()) do
+        if obj.id == id then
+            count = count + obj.count
+        end
+    end
+    return count
+end
+function takefind(id)
+    for _, obj in pairs(getObjects()) do
+        if obj.id == id then
+            local x = math.floor(obj.x//32)
+            local y = math.floor(obj.y//32)
+            if obj.id == id then
+                if bot:findPath(x, y) then
+                    sleep(500)
+                    bot:collectObject(obj.oid, 3)
+                    sleep(500)
+                end
+                if bot:getInventory():getItemCount(id) ~= 0 then 
+                    break 
+                end
+            end
+        end
+    end
+end
+function pickaxe()
+    while true do
+        if scanFloat(98) > 0 then
+            if bot:getInventory():getItemCount(98) == 0 then
+                takefind(98)
+                sleep(500)
+                if bot:getInventory():getItemCount(98) > 0 then
+                    bot:moveRight(2) 
+                    sleep(500)
+                    bot:moveLeft(1)
+                    sleep(500)
+                    Itemdrop(98,bot:getInventory():getItemCount(98) - 1)
+                    sleep(500)
+                    break
+                end
+            end
+        end
+        sleep(500)
+    end
+end
+--========================
+function warps(x)
+    while bot.status ~= BotStatus.online  do sleep(10000) end
+    if bot.status == BotStatus.online then
+        while bot:getWorld().name:lower() ~= split(x,"|")[1]:lower() or getTile(bot.x, bot.y).fg == 6 do
+            bot:warp(x)
+            -- bot:sendPacket(3,"action|join_request\nname|"..x.."\ninvitedWorld|0")
+            sleep(10000)  
+        end
+    end
+end
+function warps_pnb(x)
+    while bot.status ~= BotStatus.online do sleep(10000) end
+    if bot.status == BotStatus.online then
+        if pnb_home then
+            while bot:getWorld().name:lower() ~= split(x,"|")[1]:lower() do
+                bot:warp(x)
+                -- bot:sendPacket(3,"action|join_request\nname|"..x.."\ninvitedWorld|0")
+                sleep(10000) 
+            end 
+        else
+            while bot:getWorld().name:lower() ~= split(x,"|")[1]:lower() or getTile(bot.x, bot.y).fg == 6 do
+                bot:warp(x)
+                -- bot:sendPacket(3,"action|join_request\nname|"..x.."\ninvitedWorld|0")
+                sleep(10000) 
+            end
+        end
+    end
+end
+function baris()
+    for __,player in pairs(getBots()) do
+        if player.name == getBot().name then
+            for __,tile in pairs(getTiles()) do
+                if tile.fg == idbaris or tile.bg == idbaris then
+                    pnbx = tile.x + (i * 3)
+                    pnby = tile.y - 3
+                end
+            end
+            break
+        else
+            i = i + 1
+        end
+    end
+    return 
+end
+function joindoor()
+    while bot:getTile(math.floor(getLocal().posx // 32), math.floor(getLocal().posy // 32)).fg == 6 or bot:getWorld().name ~= split(world_pnb,"|")[1]:lower() or bot:getWorld().name == "exit" or bot:getTile(math.floor(getLocal().posx // 32), math.floor(getLocal().posy // 32)).fg == 12 or (getLocal().posx // 32 ~= doorx) do
+        warps_pnb(world_pnb)
+        while bot:getWorld().name ~= split(world_pnb,"|")[1]:lower() do
+            sleep(500)
+        end
+        bot:findPath(doorx,doory)
+        sleep(500)
+    end
+    return false
+end
+function joinpnb()
+    if bot.status == BotStatus.online then
+        while getTile(bot.x, bot.y / 32).fg == 6 or bot:getWorld().name:lower() ~= split(world_pnb,"|")[1]:lower() do
+            warps_pnb(world_pnb)
+        end
+        if getTile(bot.x, bot.y).fg == 6 or (bot.x ~= pnbx and bot.y ~= pnby) then
+            bot:findPath(pnbx,pnby)
+            sleep(500)
+        end
+    end
+    return true
+end
+function joindrop()
+    if bot.status == BotStatus.online then
+        while getTile(bot.x, bot.y / 32).fg == 6 or bot:getWorld().name:lower() ~= split(dropseed,"|")[1]:lower() do
+            warps(dropseed)
+        end
+    end
+    return false
+end
+function joinblock()
+    if bot:getPing() ~= 0 and bot:isInWorld() then
+        while getTile(bot.x, bot.y).fg == 6 or bot:getWorld().name:lower() ~= split(storage,"|")[1]:lower() do
+            warps(storage)
+        end
+    end
+    return false
+end
+function joinpack()
+    if bot.status == BotStatus.online then
+        while getTile(bot.x, bot.y / 32).fg == 6 or bot:getWorld().name:lower() ~= split(droppack,"|")[1]:lower() do
+            warps(droppack)
+        end
+    end
+    return false
+end
+function modjoined(guardian)
+    if guardian then
+        
+        guardianjoin=true
+    else
+        
+        modjoin=true
+    end
+end
+function droped(B,worldnya)
+    bot.auto_collect = false
+    if bot:getWorld().name:lower() ~= split(worldnya,"|")[1]:lower() then
+        warps(worldnya)
+    end
+    if bot:isInWorld() and bot:getWorld().name:lower()==split(worldnya,"|")[1]:lower() and bot:getPing() ~= 0 then
+        for V,c in pairs(getTiles()) do
+            if c.fg==104 or c.bg==104 then
+                if bot:getWorld().name:lower() == split(storage,"|")[1]:lower() then
+                    joinblock()
+                    bot:findPath(c.x-block_x,c.y-block_y)
+                    sleep(500)
+                end
+                while bot:getInventory():getItemCount(B)>0 do
+                    if not maxSpot then
+                        bot:drop(B, bot:getInventory():getItemCount(B)) 
+                        sleep(500)
+                        if bot:getInventory():getItemCount(B) ~=0 then
+                            maxSpot = true
+                        end
+                    end
+                    if maxSpot then
+                        maxSpot = false
+                        bot:moveLeft(2) 
+                        sleep(500)
+                        bot:moveRight(1) 
+                        sleep(500)
+                        if bot:getWorld().name:lower() == split(storage,"|")[1]:lower() then
+                            block_x = block_x + 1
+                        end
+                        
+                    end
+                    if not maxSpot and bot:getInventory():getItemCount(B)==0 then goto C end
+                end
+            end
+        end
+        ::C::
+    end
+end
+function take()
+    if bot:isInWorld() then
+        for i, object in pairs(getObjects()) do
+            if object.id == idblock then
+                local posX = math.floor(object.x / 32)
+                local posY = math.floor(object.y / 32)
+                if object.id == idblock then
+                    if bot:findPath(posX, posY) then
+                        sleep(500)
+                        bot:collectObject(object.oid, 2)
+                    end
+                    if bot:getInventory():getItemCount(idblock) ~= 0 then 
+                        sleep(500)
+                        return true 
+                    end
+                end
+            end
+        end
+        return false
+    end
+end
+addEvent(Event.variantlist,function(variant, netid)
+    if variant:get(0):getString() == "OnTextOverlay" then
+        if variant:get(1):getString():find("You can't drop") then
+            maxSpot = true
+        end
+    end
+   end)
+function dropbijilu(B)
+    if bot:getWorld().name:lower() ~= split(dropseed,"|")[1]:lower() then
+        warps(dropseed)
+        joindrop()
+    end
+    if bot:isInWorld() and bot:getWorld().name:lower()==split(dropseed,"|")[1]:lower() and bot.status == BotStatus.online then
+        joindrop()
+        for V,c in pairs(getTiles()) do
+            if c.fg==iddropseed or c.bg==iddropseed then
+                bot:findPath(c.x-seed_x,c.y)
+                sleep(500)
+                while bot:getInventory():getItemCount(B)>0 do
+                    if not maxSpot then
+                        joindrop()
+                        bot:drop(idseed, bot:getInventory():getItemCount(idseed) - 1) 
+                        sleep(500)
+                        joindrop()
+                        if bot:getInventory():getItemCount(idseed) ~=1 then
+                            joindrop()
+                            maxSpot = true
+                        end
+                    end
+                    if maxSpot then
+                        joindrop()
+                        maxSpot = false
+                        bot:moveLeft(2) 
+                        sleep(500)
+                        bot:moveRight(1) 
+                        seed_x = seed_x + 1
+                    end
+                    if not maxSpot and bot:getInventory():getItemCount(idseed)==1 then goto C end
+                end
+            end
+        end
+        ::C::
+    end
+end
+function buypack()
+    if bot:getWorld().name:lower() ~= split(droppack,"|")[1]:lower() or getTile(bot.x, bot.y / 32).fg == 6 then
+        warps(droppack)
+        joinpack()
+    end
+    if bot:getWorld().name:lower()==split(droppack,"|")[1]:lower() or getTile(bot.x, bot.y / 32).fg == 6 then
+        if bot:isInWorld() then
+            joinpack()
+            while bot.gem_count>=pricepack do
+                sleep(500)
+                if bot:getInventory():getItemCount(packid[1])~=200 then
+                    bot:sendPacket(2,"action|store\nlocation|gem")
+                    sleep(500)
+                    bot:sendPacket(2,"action|buy\nitem|bigitems")
+                    sleep(500)
+                    bot:sendPacket(2,"action|buy\nitem|"..packname)
+                    sleep(500)
+                    joinpack()
+                end
+                if bot:getInventory():getItemCount(packid[1])==200 then
+                    break
+                end
+                joinpack()
+                if bot:getInventory():getItemCount(packid[1])==0 then
+                    bot:sendPacket(2,"action|buy\nitem|upgrade_backpack")
+                    sleep(500)
+                end
+                joinpack()
+                if bot.gem_count<pricepack then
+                    sleep(100)
+                    break
+                end
+            end
+            for E,V in pairs(getTiles()) do
+                if V.fg==iddroppack or V.bg==iddroppack then
+                    bot:findPath(V.x,V.y)
+                    sleep(500)
+                    for B,E in pairs(packid) do
+                        while bot:getInventory():getItemCount(E)>0 do
+                            sleep(500)
+							bot:moveLeft(2)
+							sleep(500)
+                            bot:moveRight(1)
+                            bot:drop(E, bot:getInventory():getItemCount(E))
+                            sleep(500)
+                            joinpack()
+                        end
+                    end
+                end
+            end
+            joinpack()
+        end
+    end
+end
+function Scan()
+    scankntl = 0
+    if bot:isInWorld() then
+        for _, object in pairs(getObjects()) do
+            if object.id == idblock then
+                scankntl = scankntl + object.count
+            end
+        end
+        return scankntl
+    end
+end
+function ScanSeed()
+    scankntl_seed = 0
+    if bot:isInWorld() then
+        for _, object in pairs(getObjects()) do
+            if object.id == idseed then
+                scankntl_seed = scankntl_seed + object.count
+            end
+        end
+        return scankntl_seed
+    end
+end
+function ScanGems()
+    gs_gems = 0
+    if bot:isInWorld() then
+        for _, object in pairs(getObjects()) do
+            if object.id == 112 then
+                gs_gems = gs_gems + object.count
+            end
+        end
+        return gs_gems
+    end
+end
+function ScanPack()
+    scan_pack = 0
+    if bot:isInWorld() then
+        for _, object in pairs(getObjects()) do
+            if object.id == packid[1] then
+                scan_pack = scan_pack + object.count
+            end
+        end
+        return scan_pack
+    end
+end
+function punch(poskex, poskey)
+    pkt = GameUpdatePacket.new()
+    pkt.type = 3
+    pkt.int_data = 18
+	pkt.flags = 16
+    pkt.pos_x = (bot:getWorld():getLocal().posx)
+    pkt.pos_y = (bot:getWorld():getLocal().posy)
+    pkt.int_x = poskex
+    pkt.int_y = poskey
+    bot:sendRaw(pkt)
+end
+function placeblock(poskex, poskey)
+    pkt = GameUpdatePacket.new()
+    pkt.type = 3
+    pkt.int_data = idblock
+	pkt.flags = 16
+    pkt.pos_x = (bot:getWorld():getLocal().posx)
+    pkt.pos_y = (bot:getWorld():getLocal().posy)
+    pkt.int_x = poskex
+    pkt.int_y = poskey
+    bot:sendRaw(pkt)
+end
+function pnb()
+    joinpnb()
+    if getTile(bot.x, bot.y).fg == 6 or bot.x ~= pnbx or bot.y ~= pnby then
+        bot:findPath(pnbx,pnby)
+        sleep(3000)
+    end
+    bot.auto_collect = true
+    farm.enabled = true
+    while bot:getInventory():getItemCount(idblock)~=0 and bot.status == BotStatus.online do
+        joinpnb()
+        -- if getTile(bot.x, bot.y).fg == 6 or bot.x ~= pnbx then
+        --     bot:findPath(pnbx,pnby)
+        --     sleep(1000)
+        -- end
+        -- if bot:getPing() >= 600 then farm.enabled = false sleep(10000) farm.enabled = true end
+        -- if bot:getInventory():getItemCount(idseed)>=200 then farm.enabled = false goto A end
+        -- sleep(10000)
+        if bot:getInventory():getItemCount(idseed)>=200 or bot.level < 12 then goto A end
+        -- if getTile(pnbx,pnby+1).fg~=0 and bot.status == BotStatus.online then
+        --     punch(bot.x, bot.y+1)
+        --     sleep(160)
+        -- end
+        -- if getTile(pnbx,pnby-1).fg~=0 and bot.status == BotStatus.online then
+        --     punch(bot.x, bot.y-1)
+        --     sleep(bot:getPing() + 100)
+        -- end
+        -- if getTile(pnbx,pnby-1).fg~=0 and bot.status == BotStatus.online then
+        --     bot:hit(bot.x, bot.y-1)
+        --     sleep(230)
+        -- end
+        -- if getTile(pnbx+1,pnby-1).fg~=0 and bot.status == BotStatus.online then
+        --     bot:hit(bot.x+1, bot.y-1)
+        --     sleep(230)
+        -- end
+        -- if getTile(pnbx+2,pnby-1).fg~=0 and bot.status == BotStatus.online then
+        --     bot:hit(bot.x+2, bot.y-1)
+        --     sleep(230)
+        -- end
+        -- if getTile(pnbx,pnby+1).fg==0 and bot:getInventory():getItemCount(idblock) ~= 0 and bot.status == BotStatus.online then
+        --     placeblock(bot.x, bot.y+1, idblock)
+        --     sleep(160)
+        -- end
+        -- if getTile(pnbx,pnby-1).fg==0 and bot:getInventory():getItemCount(idblock) ~= 0 and bot.status == BotStatus.online then
+        --     placeblock(bot.x, bot.y-1, idblock)
+        --     sleep(150)
+        -- end
+        -- if getTile(pnbx,pnby-1).fg==0 and bot:getInventory():getItemCount(idblock) ~= 0 and bot.status == BotStatus.online then
+        --     bot:place(bot.x, bot.y-1, idblock)
+        --     sleep(225)
+        -- end
+        -- if getTile(pnbx+1,pnby-1).fg==0 and bot:getInventory():getItemCount(idblock) ~= 0 and bot.status == BotStatus.online then
+        --     bot:place(bot.x+1, bot.y-1, idblock)
+        --     sleep(225)
+        -- end
+        -- if getTile(pnbx+2,pnby-1).fg==0 and bot:getInventory():getItemCount(idblock) ~= 0 and bot.status == BotStatus.online then
+        --     bot:place(bot.x+2, bot.y-1, idblock)
+        --     sleep(225)
+        -- end
+        sleep(500)
+    end
+    ::A::
+    bot.auto_collect = false
+    farm.enabled = false
+    -- while getTile(pnbx-2,pnby-1).fg~=0 and bot.status == BotStatus.online do
+    --     punch(bot.x-2, bot.y-1)
+    --     sleep(180)
+    -- end
+    -- while getTile(pnbx-1,pnby-1).fg~=0 and bot.status == BotStatus.online do
+    --     punch(bot.x-1, bot.y-1)
+    --     sleep(180)
+    -- end
+    -- while getTile(pnbx,pnby-1).fg~=0 and bot.status == BotStatus.online do
+    --     punch(bot.x, bot.y-1)
+    --     sleep(180)
+    -- end
+    -- while getTile(pnbx+1,pnby-1).fg~=0 and bot.status == BotStatus.online do
+    --     punch(bot.x+1, bot.y-1)
+    --     sleep(180)
+    -- end
+    -- while getTile(pnbx+2,pnby-1).fg~=0 and bot.status == BotStatus.online do
+    --     punch(bot.x+2, bot.y-1)
+    --     sleep(180)
+    -- end
+    sleep(1000)
+end
+function sendWebhookSeed(text)
+    webhook = Webhook.new(webhook_link)
+    webhook.embed1.use = true
+    webhook.embed1.title = text
+    webhook.embed1.description = scankntl_seed
+    webhook:edit("1200630876036415618")
+end
+function sendWebhookPack(text)
+    webhook = Webhook.new(webhook_link)
+    webhook.embed1.use = true
+    webhook.embed1.title = text
+    webhook.embed1.description = scan_pack
+    webhook:edit("1200630881136681073")
+end
+function sendWebhookBlock(text)
+    webhook = Webhook.new(webhook_link)
+    webhook.embed1.use = true
+    webhook.embed1.title = text
+    webhook.embed1.description = scankntl
+    webhook:edit("1200630895258914978")
+end
+function rotasi_up()
+    rotation.auto_jammer = false
+    rotation.dynamic_delay = false
+    rotation.ignore_plant = false
+    rotation.clear_objects = true
+    rotation.pnb_in_home = true
+    rotation.harvest_until_level = false
+    rotation.auto_fill = true
+end
+function rotasi_down()
+    rotation.auto_jammer = false
+    rotation.dynamic_delay = false
+    rotation.ignore_plant = true
+    rotation.clear_objects = false
+    rotation.pnb_in_home = true
+    rotation.harvest_until_level = true
+    rotation.auto_fill = true
+end
+function drop_seed_max()
+    if bot:getInventory():getItemCount(idseed) == 200 then
+        bot.auto_collect = false
+        dropbijilu(idseed)
+        ScanSeed()
+        sendWebhookSeed("Dropp Seed ...")
+    end
+end
+function drop_seed_harvest()
+    if bot:getInventory():getItemCount(idseed) >= 30 then
+        bot.auto_collect = false
+        dropbijilu(idseed)
+        ScanSeed()
+        sendWebhookSeed("Dropp Seed ...")
+    end
+end
+function cek_block_and_pnb_up_12()
+    if bot:getInventory():getItemCount(idblock) == 0 then
+        if take_block_storage then
+            warps(storage)
+            Scan()
+            sendWebhookBlock("Take Block ...")
+            if not take() then
+                rotation.enabled = true
+                while true do 
+                    if bot:getInventory():getItemCount(idblock) >= 150 then
+                        rotation.enabled = false
+                        break
+                    end
+                    sleep(100)
+                end
+            end
+        else
+            rotation.enabled = true
+            while true do 
+                if bot:getInventory():getItemCount(idblock) >= 150 then
+                    rotation.enabled = false
+                    break
+                end
+                sleep(100)
+            end
+        end
+        if bot.gem_count >= 2000 or bot:getInventory():getItemCount(242) > 0 then
+            bot.auto_collect = false
+            buypack()
+            ScanPack()
+            sendWebhookPack("Dropp Pack ...")
+            bot:warp(bot.name)
+            sleep(15000)
+        end
+        warps_pnb(world_pnb)
+        pnb()
+    end
+end
+function drop_block_and_seed_harvest_down_12()
+    if bot:getInventory():getItemCount(idblock) >= 200 then
+        rotation.enabled = false
+        bot.auto_collect = false
+        sleep(1000)
+        warps(storage)
+        joinblock()
+        droped(idblock,storage)
+        drop_seed_harvest()
+        return true
+    end
+end
+--===================================================
+function ambil_pickaxes()
+    if pickaxes then
+        if bot:getInventory():getItemCount(98) == 0 then
+            warps(takeworldpickaxe)
+            sleep(500)
+            pickaxe()
+            sleep(1000)
+            bot:use(98)
+            sleep(2000)
+        end
+    end
+end
+function baris2(group_index)
+    for __,player in pairs(getBots()) do
+        if player.name == getBot().name then
+            for __,tile in pairs(getTiles()) do
+                if tile.fg == idbaris or tile.bg == idbaris then
+                    pnbx = tile.x + (group_index * 3)
+                    pnby = tile.y - 3
+                end
+            end
+            break
+        end
+    end
+    return 
+end
+function getWorldPNB(botIndex)
+    local group_index = ((botIndex - 1) % 4) + 1
+    local world_index = math.ceil(botIndex / 4)
+    return world_pnb_list[world_index], group_index
+end
+--===================================================
+--AWAL
+--===================================================
+ambil_pickaxes()
+function starting()
+    if pnb_home then
+        if bot:getWorld().name:lower() == "exit" then
+            bot:sendPacket(3,"action|join_request\nname|ayoyofirttime\ninvitedWorld|0")
+            sleep(7000)
+            bot:say("/home")
+            sleep(20000)
+            world_pnb = bot:getWorld().name:lower()
+        else
+            while true do
+                if bot:getWorld().name:lower() == "ayoyofirttime" or bot:getWorld().name:lower() == "nudkel" then
+                    bot:say("/home")
+                    sleep(20000)
+                    world_pnb = bot:getWorld().name:lower()
+                else
+                    break
+                end
+            end
+        end
+    else
+        while true do
+            if bot.status == BotStatus.online then
+                warps_pnb(world_pnb)
+                sleep(500)
+                baris()
+                world_pnb, group_index = getWorldPNB(i)
+                warps_pnb(world_pnb)
+                sleep(500)
+                baris2(group_index)
+                print(group_index)
+                break
+            else
+                sleep(20000)
+            end
+        end
+    end
+end
+--sendWbhook
+starting()
+if i == 1 then
+    runThread(webHookAkun)
+end
+--end sendwebhook
+while true do
+    pcall(function()
+        if bot.level >= 12 then
+            rotation.enabled = false
+            rotasi_up()
+            warps_pnb(world_pnb)
+            pnb()
+            drop_seed_max()
+            cek_block_and_pnb_up_12()
+        else
+            ambil_pickaxes()
+            rotasi_down()
+            rotation.enabled = true
+            --harvest totaion enable and drop block and seed to storage
+            -- drop_block_and_seed_harvest_down_12()
+            sleep(1000)
+        end
+    end)
+end
