@@ -1,8 +1,9 @@
-data_id = [[
-isi email password sama kaya gmail aja
-]]
-
-for str in string.gmatch(data_id, "([^\r\n]+)") do
-    local email, password= str:gsub(" ",""):match("([^|]+):(.+)")
-    addUbiBot(email, password, "",true)
-end
+STRNIMAS:VRI877ZE21:0
+ARIOPAPAR:VRI877ZE21:1
+ARIOPAPAR2:VRI877ZE21:1
+ARIOPAPAR3:VRI877ZE21:1
+ARIOPAPARS4:VRI877ZE21:1
+ARIOPAPARS1:VRI877ZE21:1
+ARIOPAPARS2:VRI877ZE21:1
+ARIOPAPARS3:VRI877ZE21:1
+ARIOPAPARS5:VRI877ZE21:1
