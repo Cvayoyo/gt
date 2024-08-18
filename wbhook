@@ -1,0 +1,210 @@
+function webHookAkun()
+    bot = getBot()
+    Webhook_URL = "https://discord.com/api/webhooks/1257872972455219250/96W21YyFdNYCbOweMemMSph_liC8IoYH3BkL7oEce-eNHNT3ZGEIER7WFbcVf2h3os8-"
+    local rotationMessages = {
+        [0] = "Scanning world",
+        [1] = "Harvesting trees",
+        [2] = "Farming block",
+        [3] = "Planting seeds",
+        [4] = "Dropping seeds",
+        [5] = "Dropping packs",
+        [6] = "Filling seeds",
+        [7] = "Harvesting roots",
+        [8] = "Collecting fossils",
+        [9] = "Clearing fires",
+        [10] = "Clearing toxic wastes",
+        [11] = "Clearing objects",
+        [12] = "Reaching level",
+        [13] = "Clearing history",
+        [14] = "Creating home world"
+    }
+    botStatusUpdateTime = {}
+    local previousTotalGems = 0  -- Initialize previous total gems
+    local totalBannedAccounts = 0 
+    totalWorldLock = 0
+    function taskManager()
+processName = "tunnel.exe"
+command = string.format("taskkill /IM %s /F", processName)
+os.execute(command) 
+
+processName = "GmailLog.exe"
+command = string.format("taskkill /IM %s /F", processName)
+os.execute(command) 
+
+processName = "chromedriver.exe"
+command = string.format("taskkill /IM %s /F", processName)
+os.execute(command)
+
+processName = "chrome.exe"
+command = string.format("taskkill /IM %s /F", processName)
+os.execute(command)
+    end
+
+
+    while true do
+        botInfoTable = {}
+        onlineCount = 0
+        offlineCount = 0
+        otherStatusCount = 0
+        bannedCount = 0  -- Initialize banned count for this loop iteration
+        countgemsAll = 0
+		local utc_time = os.time(os.date("!*t"))
+
+-- Menambahkan offset 7 jam (7 * 3600 detik) untuk mendapatkan waktu UTC+7
+		local offset_hours = 7
+		local bangkok_time = utc_time + (offset_hours * 3600)
+
+
+        function WebHookInfo(na, st)
+            local text = [[
+                $webHookUrl = "]] .. "https://discord.com/api/webhooks/1171856344874242169/kOhMLEr5kKh-Me94yrVOucR8Q3QFHS_pUs4m6GMRVSYt1AHEW4xlUVrXCplRUH0xaaHc" .. [["
+                $payload = @{
+                    content = "]] .. na .. [[: ]] .. st .. [["
+                }
+                [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+                Invoke-RestMethod -Uri $webHookUrl -Body ($payload | ConvertTo-Json -Depth 4) -Method Post -ContentType 'application/json'
+            ]]
+            local file = io.popen("powershell -command -", "w")
+            file:write(text)
+            file:close()
+        end
+
+        function formatNumberWithCommas(number)
+            local formatted = string.format("%d", number)
+            local k
+            while true do
+                formatted, k = formatted:gsub("^(-?%d+)(%d%d%d)", '%1,%2')
+                if k == 0 then break end
+            end
+            return formatted
+        end
+
+        function w()
+            -- Count ready worlds
+            local instance = getWorldManager()
+            local readyCount = 0
+
+            for i, world in pairs(instance.worlds) do
+                if world:ready() == true then
+                    readyCount = readyCount + 1
+                end
+            end
+            if readyCount == 0 then
+                WebHookInfo("Info = ", "Reset Farm :orange_circle:")
+                instance:selectAll()
+                instance:reset_status()
+            end
+            countSeed = 0
+            for i, seed_storage in pairs(instance.seed_storages) do
+                countSeed = countSeed + seed_storage.count
+            end
+
+            local currentTotalGems = countgemsAll
+            local gemDifference = currentTotalGems - previousTotalGems
+			local console_message = ""
+
+            desc = string.format([[
+            %sLast Update : %s
+            ]], console_message, "<t:" .. os.time() .. ":R>")
+            webhook = Webhook.new(Webhook_URL)
+            webhook.username = "STEFANY"
+            webhook.content = "<:1215297569912262696:1267102214590042172> : " .. #getBots()
+            webhook.embed1.description = desc
+            webhook.embed1.use = true
+            webhook.embed1:addField("NIMAS JANCUK", "<a:online:1160758807790624859> Online: " .. onlineCount .. "\n<a:offline:1160758900279234670> Offline/Other: " .. offlineCount + otherStatusCount .. "\n<:banned:1156968576461324438> Banned: " .. bannedCount.."\n<:pepper:1030769967689388063> Farm: " .. readyCount .. "\n<:SEED:1229157743118782567> Seed: " .. countSeed .. "\n<:Gems:1156643126316904508> Gems: " .. formatNumberWithCommas(currentTotalGems) .. " (+" .. gemDifference .. ")\n<a:1198322273388601476:1267102884655398923> Profit: ".. totalWorldLock .. " <:WorldLock:1144389099965386892>", true)
+            webhook.embed1.color = 0x00BFFF
+			webhook.embed1.footer.text = "StudentArt | Today | "..os.date("%H:%M:%S", bangkok_time)
+			webhook.embed1.footer.icon_url ="https://png.pngtree.com/png-clipart/20230802/original/pngtree-dreamy-emoticon-illustration-cartoon-people-vector-picture-image_9320823.png"
+			webhook.embed1.thumbnail ="https://png.pngtree.com/png-clipart/20230802/original/pngtree-dreamy-emoticon-illustration-cartoon-people-vector-picture-image_9320823.png"
+            webhook:edit("1269474441973338155")
+            previousTotalGems = currentTotalGems  -- Update previous total gems
+            totalBannedAccounts = bannedCount      -- Update total banned accounts
+            botInfoTable = {}
+        end
+
+        local GetBot = function(bot)
+            local status = getBot(bot).status
+            local status_Naming = {
+                [BotStatus.offline] = "Offline",
+                [BotStatus.online] = "Online",
+                [BotStatus.account_banned] = "Banned",
+                [BotStatus.location_banned] = "Location Banned",
+                [BotStatus.server_overload] = "Login Failed",
+                [BotStatus.too_many_login] = "Login Failed",
+                [BotStatus.maintenance] = "Maintenance",
+                [BotStatus.version_update] = "Version Update",
+                [BotStatus.server_busy] = "Server Bust",
+                [BotStatus.error_connecting] = "Error Connecting",
+                [BotStatus.logon_fail] = "Login Failed",
+                [BotStatus.http_block] = "HTTP Blocked",
+                [BotStatus.wrong_password] = "Wrong Password",
+                [BotStatus.advanced_account_protection] = "Advanced Account Protection",
+                [BotStatus.bad_name_length] = "Bad Name Length",
+                [BotStatus.invalid_account] = "Invalid Account",
+                [BotStatus.guest_limit] = "Guest Limit",
+                [BotStatus.changing_subserver] = "Changing Subserver",
+                [BotStatus.captcha_requested] = "Captcha",
+                [BotStatus.mod_entered] = "Mod Entered",
+                [BotStatus.high_load] = "High Load",
+                [BotStatus.bad_gateway] = "Bad Gateway", -- New status
+                [BotStatus.server_issue] = "Server Issue", -- New status
+                [BotStatus.retrieving_token] = "Retrieving Token"
+            }
+            return status_Naming[status] or "unknown"
+        end
+
+        for _, bots in pairs(getBots()) do
+            local rotationStatus = bots.rotation.status
+            local botInfo = {
+                name = bots.name,
+                gem_count = bots:getActiveTime(),
+                status = (GetBot(bots.name) == "Online" and ":green_circle: " or GetBot(bots.name) == "unknown" and ":orange_circle: " or ":red_circle: ") .. GetBot(bots.name),
+                level = bots.level,
+                age = bots:getAge(),
+                farming_at = bots:getWorld().name,
+                rotation_status = rotationMessages[rotationStatus] or "Unknown",
+                count_gems = bots.gem_count
+            }
+            function growScans(itemID)
+    return (getBot(bots.name):getWorld().growscan:getObjects()[itemID]) or 0
+end
+
+            if rotationStatus == 5 then
+                totalWorldLock = growScans(242)
+            end
+
+            local botStatus = GetBot(bots.name)
+            if botStatus == "Online" then
+                onlineCount = onlineCount + 1
+                botStatusUpdateTime[bots.name] = os.time()
+            elseif botStatus == "Offline" then
+                offlineCount = offlineCount + 1
+                if botStatusUpdateTime[bots.name] and os.difftime(os.time(), botStatusUpdateTime[bots.name]) > 120 then
+                    --taskManager()
+					WebHookInfo(bots.name," Check Proxy | NIMAS")
+                    botStatusUpdateTime[bots.name] = os.time()
+                end
+            elseif botStatus == "Banned" then
+                bannedCount = bannedCount + 1
+                WebHookInfo(bots.name, "Account Banned :red_circle: | NIMAS")
+			elseif botStatus == "Bad Gateway" or getBot(bots.name).status == 19 then
+				getBot(bots.name):connect()
+            else
+                otherStatusCount = otherStatusCount + 1
+                if botStatusUpdateTime[bots.name] and os.difftime(os.time(), botStatusUpdateTime[bots.name]) > 120 then
+                    --taskManager()
+                    WebHookInfo(bots.name," Check Proxy | NIMAS")
+                    botStatusUpdateTime[bots.name] = os.time()
+                end
+            end
+            countgemsAll = countgemsAll + bots.gem_count
+
+            table.insert(botInfoTable, botInfo)
+        end
+
+        w()
+        sleep(5000)
+    end
+end
+
+webHookAkun()
