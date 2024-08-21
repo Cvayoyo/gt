@@ -104,14 +104,14 @@ end
 function template_rotasi()
     bot.move_x = 3
     bot.move_y = 1
-    bot.reconnect_interval = 10
+    -- bot.reconnect_interval = 10
     bot.collect_interval = 25
     bot.object_collect_delay = 0
     bot.collect_range = 6
     bot.collect_path_check = false
     rotation = bot.rotation
-    rotation.break_x = 3
-    rotation.break_y = 1
+    rotation.break_x = 45
+    rotation.break_y = 17
     rotation.custom_position = true
     rotation.auto_jammer = true
     rotation.dynamic_delay = true
@@ -378,10 +378,13 @@ function lava()
         if scanFloat(5) > 0 then
             if bot:getInventory():getItemCount(5) == 0 then
                 takefind(5)
-                sleep(500)
+                sleep(2000)
             elseif bot:getInventory():getItemCount(5) > 1 then
-                Itemdrop(5,bot:getInventory():getItemCount(5) - 1)
-                sleep(500)
+                while bot:getInventory():getItemCount(5) > 1 do
+                    warps(storage)
+                    Itemdrop(5,bot:getInventory():getItemCount(5) - 1)
+                    sleep(2000)
+                end
                 if bot:getInventory():getItemCount(5) == 1 then
                     break
                 end
@@ -406,10 +409,13 @@ function sign()
         if scanFloat(21) > 0 then
             if bot:getInventory():getItemCount(21) == 0 then
                 takefind(21)
-                sleep(500)
+                sleep(2000)
             elseif bot:getInventory():getItemCount(21) > 1 then
-                Itemdrop(21,bot:getInventory():getItemCount(21) - 1)
-                sleep(500)
+                while bot:getInventory():getItemCount(21) > 1 do
+                    warps(storage)
+                    Itemdrop(21,bot:getInventory():getItemCount(21) - 1)
+                    sleep(2000)
+                end
                 if bot:getInventory():getItemCount(21) == 1 then
                     break
                 end
@@ -434,10 +440,13 @@ function torch()
         if scanFloat(696) > 0 then
             if bot:getInventory():getItemCount(696) == 0 then
                 takefind(696)
-                sleep(500)
+                sleep(2000)
             elseif bot:getInventory():getItemCount(696) > 1 then
-                Itemdrop(696,bot:getInventory():getItemCount(696) - 1)
-                sleep(500)
+                while bot:getInventory():getItemCount(696) > 1 do
+                    warps(storage)
+                    Itemdrop(696,bot:getInventory():getItemCount(696) - 1)
+                    sleep(2000)
+                end
                 if bot:getInventory():getItemCount(696) == 1 then
                     break
                 end
@@ -763,78 +772,102 @@ function finish()
     bot.custom_status = "Finish 2 Quest"
     rotasi_up()
 end
-if bot.custom_status ~= "Finish 2 Quest" then
-    bot.custom_status = "WAIT LEVEL 6"
-    while true do
-        if bot.custom_status == "ALL INJECT" then
-            break
-        end
-        if bot.level >= 6 then
-            startings()
-            template_rotasi()
-            unlistenEvents()
-            addEvent(Event.variantlist, quest1)
-            tutorial = bot.auto_tutorial
-            tutorial.enabled = false
-            tutorial.auto_quest = false
-            tutorial.set_as_home = false
-            tutorial.set_high_level = false
-            tutorial.set_random_skin = false
-            tutorial.set_random_profile = false
-            quest_pertama()
-            quest_kedua()
-            -- quest_ketiga()
-            unlistenEvents()
-            -- check_profile()
-            -- if bot.custom_status == "Malpractice" then
-            --     bot.custom_status = "ALL INJECT(Malpractice)"
-            --     finish()
-            --     if bot.level >= 12 then
-            --         wearing()
-            --         break
-            --     end
-            -- end
-            -- sleep(500)
-            addEvent(Event.variantlist, quest1)
-            take_quest1()
-            listenEvents(2)
-            sleep(500)
-            unlistenEvents()
-            if bot.custom_status == "DONE INJECT" then
-                bot.custom_status = "checking status"
-                take_quest2()
+while bot.status ~= BotStatus.online do
+    sleep(6000)
+end
+function main()
+    if bot.custom_status ~= "Finish 2 Quest" and bot.level < 12 then
+        bot.custom_status = "WAIT LEVEL 6"
+        rotation.enabled = false
+        sleep(1000)
+        while true do
+            if bot.custom_status == "ALL INJECT" then
+                break
+            end
+            if bot.level >= 6 and bot:getInventory():getItemCount(370) > 0 then
+                startings()
+                template_rotasi()
+                unlistenEvents()
+                addEvent(Event.variantlist, quest1)
+                tutorial = bot.auto_tutorial
+                tutorial.enabled = false
+                tutorial.auto_quest = false
+                tutorial.set_as_home = true
+                tutorial.set_high_level = true
+                tutorial.set_random_skin = false
+                tutorial.set_random_profile = false
+                quest_pertama()
+                quest_kedua()
+                -- quest_ketiga()
+                unlistenEvents()
+                -- check_profile()
+                -- if bot.custom_status == "Malpractice" then
+                --     bot.custom_status = "ALL INJECT(Malpractice)"
+                --     finish()
+                --     if bot.level >= 12 then
+                --         wearing()
+                --         break
+                --     end
+                -- end
+                -- sleep(500)
+                addEvent(Event.variantlist, quest1)
+                take_quest1()
                 listenEvents(2)
                 sleep(500)
                 unlistenEvents()
                 if bot.custom_status == "DONE INJECT" then
-                    bot.custom_status = "ALL INJECT"
-                    finish()
-                    -- take_quest3()
-                    -- listenEvents(2)
-                    -- sleep(500)
-                    -- unlistenEvents()
-                    -- if bot.custom_status == "DONE INJECT" then
-                    --     bot.custom_status = "ALL INJECT"
-                    --    finish()
-                    -- else
-                    --     quest_ketiga()
-                    --     if bot.custom_status == "Malpractice" then
-                    --         bot.custom_status = "ALL INJECT(Malpractice)"
-                    --         finish()
-                    --     end
-                    -- end
+                    bot.custom_status = "checking status"
+                    take_quest2()
+                    listenEvents(2)
+                    sleep(500)
+                    unlistenEvents()
+                    if bot.custom_status == "DONE INJECT" then
+                        bot.custom_status = "ALL INJECT"
+                        finish()
+                        -- take_quest3()
+                        -- listenEvents(2)
+                        -- sleep(500)
+                        -- unlistenEvents()
+                        -- if bot.custom_status == "DONE INJECT" then
+                        --     bot.custom_status = "ALL INJECT"
+                        --    finish()
+                        -- else
+                        --     quest_ketiga()
+                        --     if bot.custom_status == "Malpractice" then
+                        --         bot.custom_status = "ALL INJECT(Malpractice)"
+                        --         finish()
+                        --     end
+                        -- end
+                    else
+                        quest_kedua()
+                    end
                 else
-                    quest_kedua()
+                    quest_pertama()
                 end
-            else
-                quest_pertama()
             end
+            if bot.level >= 12 then
+                wearing()
+                break
+            end
+            sleep(5000)
         end
-        if bot.level >= 12 then
-            wearing()
-            break
-        end
-        sleep(5000)
+    else
+        tutorial = bot.auto_tutorial
+        tutorial.enabled = false
+        tutorial.auto_quest = false
+        tutorial.set_as_home = true
+        tutorial.set_high_level = true
+        tutorial.set_random_skin = false
+        tutorial.set_random_profile = false
+        template_rotasi()
+
+        finish()
     end
 end
-
+function safe_execute(func)
+    local status, err = pcall(func)
+    if not status then
+        print("Error occurred: " .. err)
+    end
+end
+safe_execute(main)
